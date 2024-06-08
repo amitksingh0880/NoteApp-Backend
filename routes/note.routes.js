@@ -24,7 +24,7 @@ noteRouter.get("/",async (req,res) =>{
             })
         } catch (error) {
             res.send({
-                message:err.message,
+                message:error.message,
                 status:0
             })
         }

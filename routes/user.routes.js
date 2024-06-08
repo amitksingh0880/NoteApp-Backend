@@ -14,7 +14,7 @@ userRouter.get("/",(req,res) =>{
 userRouter.post("/register",(req,res) => {
     
     const {name , email , password} = req.body;
-    bcrypt.hash(password, 5, async function(err, hash) {
+    bcrypt.hash(password, 5, async function(err, hash) {  //5-- salt rounds
           
         if(err) return res.send( {
             message: "Something went Wrong",
@@ -41,10 +41,11 @@ userRouter.post("/register",(req,res) => {
 userRouter.post("/login", async (req,res) =>{
     const {email , password} = req.body;
     let option = {
-        expiresIn:"3m"
+        expiresIn:"10m"
     }
     try {
         let data = await UserModel.find({email}); 
+        console.log(data);
         if(data.length > 0)
         {
           let token =  jwt.sign({ userId: data[0]._id},"Notewebapp",option);
@@ -56,12 +57,13 @@ userRouter.post("/login", async (req,res) =>{
                     if(result) {
                         res.send({
                             message: "User loggedIn Successfully",
+                            user: {name: data[0].name, email: data[0].email},
                             token: token,
                             status: 1
                         })
                     }
                      else {
-                        res.send({
+                        res.send({ 
                             message: "Invalid Password",
                             status: 0
                         })
